@@ -15,8 +15,6 @@ Object.defineProperty(exports, "__esModule", { value: true });
 exports.booksController = void 0;
 const common_1 = require("@nestjs/common");
 const books_1 = require("../service/books");
-const path = require("path");
-const multer_1 = require("multer");
 const platform_express_1 = require("@nestjs/platform-express");
 let booksController = class booksController {
     async create(body) {
@@ -129,17 +127,7 @@ __decorate([
 ], booksController.prototype, "updateCover", null);
 __decorate([
     (0, common_1.Post)('/uploadpdf/:id'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads',
-            filename: (req, file, cb) => {
-                console.log('herfe');
-                const ext = path.extname(file.originalname);
-                const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
-                cb(null, filename);
-            },
-        }),
-    })),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),

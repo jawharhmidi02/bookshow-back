@@ -92,23 +92,7 @@ export class booksController {
   }
 
   @Post('/uploadpdf/:id')
-  @UseInterceptors(
-    FileInterceptor('file', {
-      storage: diskStorage({
-        destination: './uploads',
-        filename: (req: any, file: any, cb: any) => {
-          console.log('herfe');
-
-          const ext = path.extname(file.originalname);
-          const filename = `${path.basename(
-            file.originalname,
-            ext,
-          )}-${Date.now()}${ext}`;
-          cb(null, filename);
-        },
-      }),
-    }),
-  )
+  @UseInterceptors(FileInterceptor('file'))
   async updatePdf(@Param('id') id: string, @UploadedFile() file: any) {
     console.log('test', file);
 

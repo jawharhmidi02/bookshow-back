@@ -2,7 +2,7 @@ import { db } from '../db/connect';
 import { InsertUsers, users, SelectUsers } from '../schema/users';
 import { and, eq } from 'drizzle-orm';
 import { createCipheriv, randomBytes, createDecipheriv } from 'crypto';
-import { v2 as cloudinary } from 'cloudinary';
+import { v2 as cloudinary, UploadApiResponse } from 'cloudinary';
 
 const algorithm = 'aes-256-cbc';
 const key = Buffer.from(process.env.CRYPTO_SECRET_KEY, 'hex');
@@ -52,13 +52,19 @@ export async function updateUserPfpById(id: SelectUsers['id_user'], file: any) {
         api_secret: process.env.CLOUDINARY_API_SECRET,
     });
 
-    const filePath = file.path;
-    const response = await cloudinary.uploader.upload(filePath, {
-        folder: 'profile_pictures',
-    });
+    const uploadResult = await new Promise<UploadApiResponse>(
+      (resolve, reject) => {
+        cloudinary.uploader
+          .upload_stream({ folder: 'recipevault' }, (error, result) => {
+            if (error) return reject(error);
+            resolve(result);
+          })
+          .end(file.buffer);
+      },
+    );
 
 
-    const dbResponse = await db.update(users).set({ cover_photo: response.secure_url }).where(eq(users.id_user, id)).returning();
+    const dbResponse = await db.update(users).set({ cover_photo: uploadResult.secure_url }).where(eq(users.id_user, id)).returning();
     return dbResponse;
 }
 

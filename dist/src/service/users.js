@@ -50,11 +50,16 @@ async function updateUserPfpById(id, file) {
         api_key: process.env.CLOUDINARY_API_KEY,
         api_secret: process.env.CLOUDINARY_API_SECRET,
     });
-    const filePath = file.path;
-    const response = await cloudinary_1.v2.uploader.upload(filePath, {
-        folder: 'profile_pictures',
+    const uploadResult = await new Promise((resolve, reject) => {
+        cloudinary_1.v2.uploader
+            .upload_stream({ folder: 'recipevault' }, (error, result) => {
+            if (error)
+                return reject(error);
+            resolve(result);
+        })
+            .end(file.buffer);
     });
-    const dbResponse = await connect_1.db.update(users_1.users).set({ cover_photo: response.secure_url }).where((0, drizzle_orm_1.eq)(users_1.users.id_user, id)).returning();
+    const dbResponse = await connect_1.db.update(users_1.users).set({ cover_photo: uploadResult.secure_url }).where((0, drizzle_orm_1.eq)(users_1.users.id_user, id)).returning();
     return dbResponse;
 }
 async function deleteUser(id) {
