@@ -120,17 +120,7 @@ __decorate([
 ], booksController.prototype, "delete", null);
 __decorate([
     (0, common_1.Post)('/uploadcover/:id'),
-    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file', {
-        storage: (0, multer_1.diskStorage)({
-            destination: './uploads',
-            filename: (req, file, cb) => {
-                console.log("herfe");
-                const ext = path.extname(file.originalname);
-                const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
-                cb(null, filename);
-            },
-        }),
-    })),
+    (0, common_1.UseInterceptors)((0, platform_express_1.FileInterceptor)('file')),
     __param(0, (0, common_1.Param)('id')),
     __param(1, (0, common_1.UploadedFile)()),
     __metadata("design:type", Function),
@@ -143,7 +133,7 @@ __decorate([
         storage: (0, multer_1.diskStorage)({
             destination: './uploads',
             filename: (req, file, cb) => {
-                console.log("herfe");
+                console.log('herfe');
                 const ext = path.extname(file.originalname);
                 const filename = `${path.basename(file.originalname, ext)}-${Date.now()}${ext}`;
                 cb(null, filename);
